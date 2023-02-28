@@ -1,0 +1,15 @@
+
+Remove-Item -Path "C:\Program Files\Proxmox\pve-enterprise.list" -Force
+
+# Install Proxmox VE
+Invoke-WebRequest -Uri https://download.proxmox.com/iso/proxmox-ve_7.1-1.iso -OutFile proxmox.iso
+New-Item -ItemType Directory -Force -Path C:\proxmox
+Mount-DiskImage -ImagePath C:\proxmox\proxmox.iso -StorageType ISO
+Start-Process -FilePath "C:\proxmox\proxmox-ve_7.1-1.iso" -ArgumentList "/install", "/serial-console=ttyS0,115200", "/target=sda", "/noninteractive" -Wait
+
+# Discard any prior local config
+rm /etc/network/interfaces
+rm /etc/netplan/*
+
+# Reboot the machine
+Restart-Computer -Force
